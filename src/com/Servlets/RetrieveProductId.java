@@ -31,6 +31,7 @@ public class RetrieveProductId extends HttpServlet {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(request.getParameter("ID"));
 		
+		
 		Product p = ProductIdDao.getRecordById(id);
 		
 		if(p != null)
