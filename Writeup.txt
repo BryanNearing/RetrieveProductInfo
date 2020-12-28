@@ -1,0 +1,5 @@
+This project has an sql script which needs to be run to populate tables in the users system
+
+This project takes in a Product Id, then searches the database for the answer, and displays the product object if it was found.
+
+If the product was not found, the webpage outputs "not found in the database".

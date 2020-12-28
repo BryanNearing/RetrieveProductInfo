@@ -1,0 +1,180 @@
+Welcome.html
+-------------------------------------------------------
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Welcome</title>
+</head>
+<body>
+
+
+<form method="post" action="RetrieveProductId">
+
+
+Enter the Product ID of the product you want<br/>
+ProductId:<input type="text" name="ID"> <br/>
+
+
+
+<button type="submit">Submit</button><br/>
+</form>
+
+
+</body>
+</html>
+
+Product.java
+-------------------------------------------------------
+package com.Product;
+
+public class Product {
+
+	private int id;
+	private String name;
+	private String department;
+	private float cost;
+	
+	public Product() {
+		super();
+	}
+
+	public Product(int id, String name, String department, float cost) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.department = department;
+		this.cost = cost;
+	}
+
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public float getCost() {
+		return cost;
+	}
+
+	public void setCost(float cost) {
+		this.cost = cost;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [id=" + id + ", name=" + name + ", department=" + department + ", cost=" + cost + "]";
+	}	
+}
+
+ProductIdDao.java
+-------------------------------------------------------
+package com.Dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.Product.Product;
+
+public class ProductIdDao {
+
+	public static Connection getConnection(){
+		Connection con=null;
+		try{
+			Class.forName("com.mysql.jdbc.Driver");
+			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","admin","password");
+		}catch(Exception e){
+			System.out.println(e);
+		}
+		return con;
+	}
+	
+	public static Product getRecordById(int id){
+		Product p = null;
+		try{
+			Connection con = getConnection();
+			PreparedStatement ps=con.prepareStatement("select * from Product where id=?");
+			ps.setInt(1,id);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				p = new Product();
+				p.setId(rs.getInt("id"));
+				p.setName(rs.getString("name"));
+				p.setDepartment(rs.getString("department"));
+				p.setCost(rs.getFloat("cost"));
+			}
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+		return p;
+	}
+	
+	
+}
+
+RetreiveProductId.java
+-------------------------------------------------------
+package com.Servlets;
+
+import java.io.IOException;
+import com.Dao.*;
+import com.Product.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class RetrieveProductId
+ */
+@WebServlet("/RetrieveProductId")
+public class RetrieveProductId extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public RetrieveProductId() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		int id = Integer.parseInt(request.getParameter("ID"));
+		
+		Product p = ProductIdDao.getRecordById(id);
+		
+		if(p != null)
+			response.getWriter().println(p);
+		else
+			response.getWriter().println("This product is not in the database");
+	}
+
+}

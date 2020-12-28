@@ -13,7 +13,7 @@ public class ProductIdDao {
 		Connection con=null;
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/hcl","admin","password");
+			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","admin","password");
 		}catch(Exception e){
 			System.out.println(e);
 		}
@@ -24,7 +24,7 @@ public class ProductIdDao {
 		Product p = null;
 		try{
 			Connection con = getConnection();
-			PreparedStatement ps=con.prepareStatement("select * from products where id=?");
+			PreparedStatement ps=con.prepareStatement("select * from Product where id=?");
 			ps.setInt(1,id);
 			ResultSet rs=ps.executeQuery();
 			while(rs.next()){
